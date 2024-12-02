@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+
 @RequestMapping("/api/todo")
 @RestController
 @RequiredArgsConstructor
@@ -34,15 +37,17 @@ public class TodoController {
     public ResponseEntity<Todo.DomainResponse> addTodoDomain(@RequestBody Todo.DomainRequest request) {
         Todo.DomainResponse response =  todoService.addTodoDomain(request.toDomain()).toResponse();
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(CREATED).body(response);
     }
 
     @PutMapping("/domain/{id}")
     @Operation(summary = "Todo 도메인 수정")
     public ResponseEntity<Todo.DomainResponse> updateTodoDomain(@RequestBody Todo.DomainRequest request,
                                                                 @PathVariable int id) {
-        request.setId(id);
-        Todo.DomainResponse response = todoService.updateTodoDomain(request.toDomain()).toResponse();
+        Todo.Domain domain = request.toDomain();
+        domain.setId(id);
+
+        Todo.DomainResponse response = todoService.updateTodoDomain(domain).toResponse();
 
         return ResponseEntity.ok(response);
     }
@@ -52,6 +57,6 @@ public class TodoController {
     public ResponseEntity<Void> deleteTodoDomain(@PathVariable int id) {
         todoService.deleteTodoDomain(id);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(NO_CONTENT).build();
     }
 }
