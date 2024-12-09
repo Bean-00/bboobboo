@@ -24,8 +24,11 @@ public class TodoController {
 
     @GetMapping("/domain")
     @Operation(summary = "Todo 도메인 전체 리스트 목록 조회")
-    public ResponseEntity<List<Todo.DomainResponse>> getTodoDomainList() {
-        List<Todo.Domain> domainList = todoService.getTodoDomainList();
+    public ResponseEntity<List<Todo.DomainResponse>> getTodoDomainList(@RequestParam(name = "status", required = false) Integer status) {
+        List<Todo.Domain> domainList = todoService.getTodoDomainList(Todo.Condition.builder()
+                .userId(2)
+                .status(status)
+                .build());
 
         return ResponseEntity.ok(domainList.stream()
                 .map(Todo.Domain::toResponse)
@@ -35,7 +38,7 @@ public class TodoController {
     @PostMapping("/domain")
     @Operation(summary = "Todo 도메인 추가")
     public ResponseEntity<Todo.DomainResponse> addTodoDomain(@RequestBody Todo.DomainRequest request) {
-        Todo.DomainResponse response =  todoService.addTodoDomain(request.toDomain()).toResponse();
+        Todo.DomainResponse response = todoService.addTodoDomain(request.toDomain()).toResponse();
 
         return ResponseEntity.status(CREATED).body(response);
     }
@@ -58,5 +61,11 @@ public class TodoController {
         todoService.deleteTodoDomain(id);
 
         return ResponseEntity.status(NO_CONTENT).build();
+    }
+
+    @GetMapping("/status")
+    @Operation(summary = "Todo 상태 목록 조회")
+    public ResponseEntity<List<Todo.Status>> getTodoStatusList() {
+        return ResponseEntity.ok(todoService.getTodoStatusList());
     }
 }

@@ -18,8 +18,8 @@ public class TodoServiceImpl implements TodoService {
     private final TodoRepository todoRepository;
 
     @Override
-    public List<Todo.Domain> getTodoDomainList() {
-        return todoRepository.findAllDomain();
+    public List<Todo.Domain> getTodoDomainList(Todo.Condition condition) {
+        return todoRepository.findAllDomain(condition);
     }
 
     @Override
@@ -42,5 +42,10 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public void deleteTodoDomain(int id) {
         todoRepository.deleteDomain(id);
+    }
+
+    @Override
+    public List<Todo.Status> getTodoStatusList() {
+        return todoRepository.findAllStatus();
     }
 }

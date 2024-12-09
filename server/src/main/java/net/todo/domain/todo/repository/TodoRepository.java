@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TodoRepository {
 
-    List<Todo.Domain> findAllDomain();
+    List<Todo.Domain> findAllDomain(Todo.Condition condition);
 
     Todo.Domain findDomainById(int id);
 
@@ -15,4 +15,7 @@ public interface TodoRepository {
     void updateDomain(Todo.Domain domain);
 
     void deleteDomain(int id);
+
+    List<Todo.Status> findAllStatus();
+
 }

@@ -9,5 +9,13 @@ export default defineConfig({
     postcss: {
       plugins: [tailwindcss()]
     }
+  },
+  server: {
+    proxy: {
+      'api': {
+        target: 'http://localhost:18000',
+        changeOrigin: true
+      }
+    }
   }
 })

@@ -34,6 +34,18 @@ public class Todo {
                     .createDt(this.createDt)
                     .build();
         }
+
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class Status {
+        private int id;
+        private String description;
+        private String icon;
     }
 
     @Getter
@@ -101,4 +113,13 @@ public class Todo {
         private LocalDateTime createDt;
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class Condition {
+        private Integer status;
+        private Integer userId;
+    }
 }
