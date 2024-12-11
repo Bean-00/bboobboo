@@ -6,3 +6,7 @@ const TODO_API_URL = `${serverHost}/api/todo`;
 export const fetchGetTodoStatusList = () => {
     return fatchGet(`${TODO_API_URL}/status`);
 }
+
+export const fetchGetTodoList = (status) => {
+    return fatchGet(`${TODO_API_URL}/domain?status=${status}`);
+}

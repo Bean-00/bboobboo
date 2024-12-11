@@ -16,7 +16,6 @@ export function TodoStatusTab({ dataSource, activeTab, onActiveTabChange }) {
               variant="default"
               onActiveTabChange={(tab) => onActiveTabChange(tab)}>
             {dataSource.map((data) => {
-                console.log("data.id: ", data.id === activeTab);
                 return (
                     <Tabs.Item key = {data.id} active={data.id === activeTab} title={data.description} icon={iconMap[data.icon]}>
                     </Tabs.Item>

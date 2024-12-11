@@ -17,7 +17,7 @@ public class Todo {
         private int userId; //TODO: user 객체로 바뀔 예정
         private String title;
         private String content;
-        private String statusCode;
+        private int statusCode;
         private String statusName;
         private LocalDateTime updateDt;
         private LocalDateTime createDt;
@@ -61,7 +61,7 @@ public class Todo {
         @Schema(description = "도메인 Note")
         private String content;
         @Schema(description = "도메인 상태 ID")
-        private String statusCode;
+        private int statusCode;
 
 
         public Domain toDomain() {
@@ -90,7 +90,7 @@ public class Todo {
         @Schema(description = "도메인 Note")
         private String content;
         @Schema(description = "도메인 상태 ID")
-        private String statusCode;
+        private int statusCode;
         @Schema(description = "도메인 상태 설명")
         private String statusName;
         @Schema(description = "도메인 업데이트 일시")
