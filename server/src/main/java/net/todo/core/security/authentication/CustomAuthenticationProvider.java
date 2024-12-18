@@ -1,12 +1,8 @@
 package net.todo.core.security.authentication;
 
-
-import lombok.Getter;
-import lombok.Setter;
 import net.todo.core.security.dto.User;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,49 +11,59 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Getter
-@Setter
 public class CustomAuthenticationProvider implements AuthenticationProvider, InitializingBean {
 
-    private Map<String, User.LoginInfo> userDB = new ConcurrentHashMap<>();
+    private Map<String, User.UserAccount> userDB = new ConcurrentHashMap<>();
+
+    @Override
+    public void afterPropertiesSet() {
+        userDB.put("popo@naver.com", User.UserAccount.builder()
+                .email("popo@naver.com")
+                .password("1234")
+                .role(Set.of(new SimpleGrantedAuthority("ROLE_USER")))
+                .name("포포")
+                .build());
+
+        userDB.put("io@naver.com", User.UserAccount.builder()
+                .email("io@naver.com")
+                .password("1234")
+                .role(Set.of(new SimpleGrantedAuthority("ROLE_ADMIN")))
+                .name("아이오")
+                .build());
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        //여기서 토큰 발행 일어남 (인증 체크)
+        //실질적인 인증 로직 => 인증되었으면 토큰 발행해주고 아니면 null, exception 리턴
+
         CustomAuthenticationToken token = (CustomAuthenticationToken) authentication;
 
-        if (userDB.containsKey(token.getName()) && userDB.get(token.getName()).getPassword().equals(token.getCredentials())) {
-            return CustomAuthenticationToken.builder()
-                    .principal(token.getPrincipal())
-                    .credentials(token.getCredentials())
-                    .details(token.getDetails())
-                    .authenticated(true)
-                    .build();
-        }
+        if (userDB.containsKey(token.getName())
+                && userDB.get(token.getName()).getPassword().equals(token.getCredentials())) {
+            User.UserAccount account = userDB.get(token.getName());
 
-        // 인증 실패 시엔 null return
+            if (account.getPassword().equals(token.getCredentials())) {
+            //인증 성공
+                return CustomAuthenticationToken.builder()
+                        .principal(User.Principal.builder()
+                                .email(account.getEmail())
+                                .name(account.getName())
+                                .role(account.getRole())
+                                .build()
+                        )
+                        .credentials(null)
+                        .details(token.getDetails())
+                        .authenticated(true)
+                        .build();
+            }
+        }
         return null;
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return authentication.equals(CustomAuthenticationToken.class);
+        return CustomAuthenticationToken.class == authentication;
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        userDB.put("rudalsOwner@naver.com", User.LoginInfo.builder()
-                .email("rudalsOwner@naver.com")
-                .password("0909")
-                .roles(Set.of(new SimpleGrantedAuthority("USER")))
-                .name("훙")
-                .build());
 
-        userDB.put("rudalsRealOwner@naver.com", User.LoginInfo.builder()
-                .email("rudalsORealwner@naver.com")
-                .password("0909")
-                .roles(Set.of(new SimpleGrantedAuthority("ADMIN")))
-                .name("훙훙")
-                .build());
-    }
 }

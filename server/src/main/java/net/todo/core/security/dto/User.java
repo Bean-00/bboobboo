@@ -16,8 +16,7 @@ public class User {
 
         private String email;
         private String name;
-        private Set<GrantedAuthority> roles;
-
+        private Set<GrantedAuthority> role;
     }
 
     @Getter
@@ -26,6 +25,7 @@ public class User {
     @AllArgsConstructor
     @Builder
     public static class LoginRequest {
+
         private String email;
         private String password;
     }
@@ -35,10 +35,10 @@ public class User {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class LoginInfo {
+    public static class UserAccount {
         private String email;
         private String name;
-        private Set<GrantedAuthority> roles;
+        private Set<GrantedAuthority> role;
         private String password;
     }
 
