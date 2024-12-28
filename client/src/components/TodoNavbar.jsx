@@ -1,6 +1,7 @@
 import {Avatar, Dropdown, Navbar} from "flowbite-react";
 import logo from "../assets/react.svg"
-import {Link, Router} from "react-router-dom";
+import {Link, Router, useNavigate, useNavigation} from "react-router-dom";
+import {logout} from "../service/SecurityService.js";
 
 const TodoNavLink = ({to, text}) => {
    return (
@@ -13,6 +14,20 @@ const TodoNavLink = ({to, text}) => {
 }
 
 export function TodoNavbar() {
+
+    const navigate = useNavigate();
+
+
+    const logoutAction = async () => {
+        const { isError, data } = await logout();
+        if (isError) {
+            alert(data.errorMessage);
+            return;
+        }
+        alert('성공적인 로그아웃');
+        navigate('/login');
+    }
+
     return (
         <Navbar fluid rounded>
             <Navbar.Brand href={"/"}>
@@ -32,7 +47,7 @@ export function TodoNavbar() {
                     <Dropdown.Header>
                         <span className="block text-sm">User</span>
                     </Dropdown.Header>
-                    <Dropdown.Item>Sign out</Dropdown.Item>
+                    <Dropdown.Item onClick={logoutAction}>Sign out</Dropdown.Item>
                 </Dropdown>
                 <Navbar.Toggle/>
             </div>

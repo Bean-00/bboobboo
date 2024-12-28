@@ -1,12 +1,12 @@
-import {fatchGet} from "./fetch.js";
+import {fetchGet} from "./fetch.js";
 
 const serverHost = import.meta.env.VITE_SERVER_HOST;
 const TODO_API_URL = `${serverHost}/api/todo`;
 
 export const fetchGetTodoStatusList = () => {
-    return fatchGet(`${TODO_API_URL}/status`);
+    return fetchGet(`${TODO_API_URL}/status`);
 }
 
 export const fetchGetTodoList = (status) => {
-    return fatchGet(`${TODO_API_URL}/domain?status=${status}`);
+    return fetchGet(`${TODO_API_URL}/domain?status=${status}`);
 }

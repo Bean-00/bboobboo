@@ -14,7 +14,7 @@ export default function TodoList({status}) {
         setIsLoading(false);
 
         if (isError) {
-            alert(`Error: ${data.message}`);
+            alert(`Error: ${data.errorMessage}`);
             return;
         }
         setTodoList(data);

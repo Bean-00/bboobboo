@@ -1,5 +1,6 @@
 package net.todo.core.security.authentication;
 
+import jakarta.annotation.PostConstruct;
 import net.todo.core.security.dto.User;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -11,13 +12,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CustomAuthenticationProvider implements AuthenticationProvider, InitializingBean {
+public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private Map<String, User.UserAccount> userDB = new ConcurrentHashMap<>();
 
-    @Override
-    public void afterPropertiesSet() {
+    @PostConstruct
+    public void initialize() {
         userDB.put("popo@naver.com", User.UserAccount.builder()
+                .id(2)
                 .email("popo@naver.com")
                 .password("1234")
                 .role(Set.of(new SimpleGrantedAuthority("ROLE_USER")))
@@ -25,6 +27,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider, Ini
                 .build());
 
         userDB.put("io@naver.com", User.UserAccount.builder()
+                .id(2)
                 .email("io@naver.com")
                 .password("1234")
                 .role(Set.of(new SimpleGrantedAuthority("ROLE_ADMIN")))
@@ -43,9 +46,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider, Ini
             User.UserAccount account = userDB.get(token.getName());
 
             if (account.getPassword().equals(token.getCredentials())) {
-            //인증 성공
+                //인증 성공
                 return CustomAuthenticationToken.builder()
                         .principal(User.Principal.builder()
+                                .id(account.getId())
                                 .email(account.getEmail())
                                 .name(account.getName())
                                 .role(account.getRole())
