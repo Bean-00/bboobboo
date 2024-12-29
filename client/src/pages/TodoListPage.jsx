@@ -1,8 +1,8 @@
 import {TodoStatusTab} from "../components/TodoStatusTab.jsx";
 import {useEffect, useState} from "react";
-import {fetchGetTodoStatusList} from "../service/TodoService.js";
+import {getTodoStatusListAction} from "../service/TodoService.js";
 import TodoList from "../components/TodoList.jsx";
-import {TodoStatusContextList} from "../context/TodoContext.jsx";
+import {TodoStatusContextList} from "../context/TodoContext.js";
 import {useNavigate} from "react-router-dom";
 
 
@@ -13,7 +13,7 @@ export default function TodoListPage() {
     const navigate = useNavigate();
 
     const getTodoStatusList = async () => {
-        const {isError, data} = await fetchGetTodoStatusList();
+        const {isError, data} = await getTodoStatusListAction();
         if (isError) {
             alert(`Error: ${data.errorMessage}`);
             if (data.httpStatusCode === 401)

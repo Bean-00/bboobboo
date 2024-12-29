@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {fetchGetTodoList} from "../service/TodoService.js";
+import {getTodoListAction} from "../service/TodoService.js";
 import TodoCard from "./TodoCard.jsx";
 import LoadPannel from "./LoadPannel.jsx";
 
@@ -10,7 +10,7 @@ export default function TodoList({status}) {
     const getTodoList = async (status) => {
         setIsLoading(true);
 
-        const {isError, data} = await fetchGetTodoList(status);
+        const {isError, data} = await getTodoListAction(status);
         setIsLoading(false);
 
         if (isError) {

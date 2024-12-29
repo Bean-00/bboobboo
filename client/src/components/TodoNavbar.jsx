@@ -1,32 +1,39 @@
 import {Avatar, Dropdown, Navbar} from "flowbite-react";
 import logo from "../assets/react.svg"
 import {Link, Router, useNavigate, useNavigation} from "react-router-dom";
-import {logout} from "../service/SecurityService.js";
+import {logoutAction} from "../service/SecurityService.js";
+import {useContext} from "react";
+import {UserContext} from "../context/UserContext.js";
 
 const TodoNavLink = ({to, text}) => {
-   return (
-       <Navbar.Link as={'div'}>
-           <Link to={to}>
-               {text}
-           </Link>
-       </Navbar.Link>
-   )
+    return (
+        <Navbar.Link as={'div'}>
+            <Link to={to}>
+                {text}
+            </Link>
+        </Navbar.Link>
+    )
 }
 
 export function TodoNavbar() {
 
+    const {loginUser, dispatch} = useContext(UserContext);
+
     const navigate = useNavigate();
 
 
-    const logoutAction = async () => {
-        const { isError, data } = await logout();
+    const logout = async () => {
+        const {isError, data} = await logoutAction();
         if (isError) {
             alert(data.errorMessage);
             return;
         }
         alert('성공적인 로그아웃');
-        navigate('/login');
+        dispatch({type: "setUser", payload: null});
+        navigate('/login')
     }
+
+    // console.log(loginUser);
 
     return (
         <Navbar fluid rounded>
@@ -44,10 +51,19 @@ export function TodoNavbar() {
                                 rounded/>
                     }
                 >
-                    <Dropdown.Header>
-                        <span className="block text-sm">User</span>
-                    </Dropdown.Header>
-                    <Dropdown.Item onClick={logoutAction}>Sign out</Dropdown.Item>
+                    {loginUser?.id?
+                        <>
+                            <Dropdown.Header>
+                                <span className="block text-sm">{loginUser.name}</span>
+                            </Dropdown.Header>
+                            <Dropdown.Item onClick={logoutAction}>Sign out</Dropdown.Item>
+                        </> :
+                        <Dropdown.Header>
+                            <Link to={'/login'}>
+                                <span className="block text-sm">Login</span>
+                            </Link>
+                        </Dropdown.Header>
+                    }
                 </Dropdown>
                 <Navbar.Toggle/>
             </div>

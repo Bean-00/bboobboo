@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {loginByEmailAndPassword} from "../service/SecurityService.js";
+import {loginByEmailAndPasswordAction} from "../service/SecurityService.js";
 
 const LoginForm = ({onSuccess, onFailure}) => {
     const [email, setEmail] = useState('');
@@ -17,7 +17,7 @@ const LoginForm = ({onSuccess, onFailure}) => {
             return;
         }
 
-        const {isError, data} = await loginByEmailAndPassword({email, password});
+        const {isError, data} = await loginByEmailAndPasswordAction({email, password});
         if (isError) {
             onFailure(data);
             return;

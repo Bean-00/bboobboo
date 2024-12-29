@@ -1,5 +1,5 @@
 import {useContext} from "react";
-import {TodoStatusContextList} from "../context/TodoContext.jsx";
+import {TodoStatusContextList} from "../context/TodoContext.js";
 
 const colorList = ['blue', 'purple', 'green']
 
@@ -7,7 +7,6 @@ export default function TodoStatusBadge({ status }) {
     const statusList = useContext(TodoStatusContextList);
 
     const getStatusName = (status) => {
-        console.log(statusList, status)
         return statusList.filter((item) => item.id === status)[0]?.description;
     }
 
