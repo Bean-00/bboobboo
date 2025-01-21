@@ -4,7 +4,9 @@ export const fetchGet = async (url) => {
 }
 
 export const fetchPost = async (url, body = {}) => {
-    return _fetch(url, {method: "Post", credentials: 'include', body: JSON.stringify(body)})
+    return _fetch(url, {method: "Post", credentials: 'include', headers: {
+            'Content-Type': 'application/json',
+        }, body: JSON.stringify(body)})
 }
 
 export const _fetch = async (url, requestInit) => {

@@ -4,6 +4,7 @@ import {getTodoStatusListAction} from "../service/TodoService.js";
 import TodoList from "../components/TodoList.jsx";
 import {TodoStatusContextList} from "../context/TodoContext.js";
 import {useNavigate} from "react-router-dom";
+import TodoAddModal from "../components/TodoAddModal.jsx";
 
 
 export default function TodoListPage() {
@@ -11,6 +12,8 @@ export default function TodoListPage() {
     const [todoStatusList, setTodoStatusList] = useState([]);
     const [activeTab, setActiveTab] = useState(0);
     const navigate = useNavigate();
+    const [isOpenAddModal, setIsOpenAddModal] = useState();
+
 
     const getTodoStatusList = async () => {
         const {isError, data} = await getTodoStatusListAction();
@@ -36,7 +39,11 @@ export default function TodoListPage() {
                                    activeTab={activeTab}
                                    onActiveTabChange={setActiveTab}
                     />
+
+
                     <TodoList status={activeTab}/>
+
+
                 </>}
         </TodoStatusContextList.Provider>
     )

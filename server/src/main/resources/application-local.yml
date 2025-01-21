@@ -2,8 +2,8 @@ spring:
   datasource:
     hikari:
       driver-class-name: ENC(GexwUCn5qNafSY4AvM1niLYZvKHBjJnKq6RE6lkzmVr1h8yyfQ03+Nlu/GcN+1J2)
-#      jdbc-url: ENC(htoPn/aWWZ2hdrw72lCh4MQ6s+iwg5FEqfMt5YulYjqhnto/7IoG09EBLwWA86Qp98PEc6F+a48=)
-      jdbc-url: ENC(ORECFTIA1nko521X5NmNZuyhyR9IDETOon7bVSoqZ98lrWo9u1RcoM5si859ytdj6lqfd1ZJm6A=)
+      jdbc-url: ENC(htoPn/aWWZ2hdrw72lCh4MQ6s+iwg5FEqfMt5YulYjqhnto/7IoG09EBLwWA86Qp98PEc6F+a48=)
+#      jdbc-url: ENC(ORECFTIA1nko521X5NmNZuyhyR9IDETOon7bVSoqZ98lrWo9u1RcoM5si859ytdj6lqfd1ZJm6A=)
       username: ENC(plkrsDYOTOQmU1019hz3FetH61U/dlrLq3dMHdN9osA=)
       password: ENC(WnHJdbOZ3RfYVDD0oAFiMy0gBZHeToBiqTMMc19T6ZA=)
       maximum-pool-size: 5
