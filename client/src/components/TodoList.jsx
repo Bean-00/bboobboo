@@ -1,13 +1,16 @@
-import {useEffect, useState} from "react";
+import {useEffect, useReducer, useState} from "react";
 import {addTodoAction, getTodoListAction} from "../service/TodoService.js";
 import TodoCard from "./TodoCard.jsx";
 import LoadPannel from "./LoadPannel.jsx";
 import TodoAddModal from "./TodoAddModal.jsx";
 import TodoDetailModal from "./TodoDetailModal.jsx";
+import {TodoListContext} from "../context/TodoContext.js";
+import TodoReducer from "../reducer/TodoReducer.js";
 
 export default function TodoList({status}) {
+
+    const [todoList, dispatch] = useReducer(TodoReducer, [])
     const [isLoading, setIsLoading] = useState(false);
-    const [todoList, setTodoList] = useState([]);
     const [isOpenAddModal, setIsOpenAddModal] = useState(false);
     const [isOpenDetailModal, setIsOpenDetailModal] = useState(false);
     const [currentTodo, setCurrentTodo] = useState(null);
@@ -22,13 +25,11 @@ export default function TodoList({status}) {
             alert(`Error: ${data.errorMessage}`);
             return;
         }
-        setTodoList(data);
-    }
 
-    const addTodo = async (data) => {
-
-        setTodoList([...todoList, data])
-        setIsOpenAddModal(false)
+        dispatch({
+            type: "setTodoList",
+            payload: data,
+        })
     }
 
     const clickTodoCard = (todo) => {
@@ -36,25 +37,12 @@ export default function TodoList({status}) {
         setIsOpenDetailModal(true)
     }
 
-    const removeTodo = (data) => {
-        const idx = todoList.findIndex(todo => todo.id === data.id)
-        if (idx < 0) {
-            return;
-        }
-        setTodoList([...todoList.slice(0, idx), ...todoList.slice(idx + 1)])
-    }
-
-    const changeTodo = (data) => {
-      const idx = todoList.findIndex(todo => todo.id === data.id)
-      todoList[idx] = data
-      setTodoList([...todoList])
-    }
-
     useEffect(() => {
         getTodoList(status)
     }, [status]);
     return (
-        <>
+        <TodoListContext.Provider value={{todoList, dispatch}}>
+
             <LoadPannel isActive={isLoading}/>
             <div className="flex justify-end pb-3">
                 <button type="button"
@@ -74,18 +62,22 @@ export default function TodoList({status}) {
                 })
             }
 
-            <TodoAddModal openModal={isOpenAddModal} onClose={() => {
-                setIsOpenAddModal(false)
-            }} onAdd={addTodo}
-            status={status}/>
+            <TodoAddModal
+                openModal={isOpenAddModal}
+                onClose={() => {
+                    setIsOpenAddModal(false)
+                }}
+                status={status}/>
             {
                 currentTodo &&
                 <TodoDetailModal openModal={isOpenDetailModal} onClose={() => {
                     setIsOpenDetailModal(false)
-                }} todo={currentTodo} onRemove={removeTodo}
-                status={{status}} onChange={changeTodo}/>
+                }} todo={currentTodo}
+                                 status={{status}}/>
             }
-        </>
+        </TodoListContext.Provider>
+
+
     )
 }
 

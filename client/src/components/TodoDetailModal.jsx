@@ -1,11 +1,13 @@
 import {Button, Modal} from "flowbite-react";
 import {removeTodoAction, saveTodoAction} from "../service/TodoService.js";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
+import {TodoListContext} from "../context/TodoContext.js";
 
-const TodoDetailModal = ({openModal, onClose, onChange, todo, onRemove}) => {
+const TodoDetailModal = ({openModal, onClose, todo }) => {
 
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [title, setTitle] = useState(todo.title);
+    const {dispatch} = useContext(TodoListContext)
 
     const closeModal = () => {
         initialize()
@@ -19,7 +21,10 @@ const TodoDetailModal = ({openModal, onClose, onChange, todo, onRemove}) => {
                 alert(`${data.errorMessage}`)
                 return
             }
-            onRemove(todo)
+            dispatch({
+                type: "removeTodo",
+                payload: todo.id
+            })
             closeModal()
         }
     }
@@ -40,7 +45,10 @@ const TodoDetailModal = ({openModal, onClose, onChange, todo, onRemove}) => {
         if (isError)
             alert(data.errorMessage)
         setIsEditingTitle(false);
-        onChange(data)
+        dispatch( {
+            type: "changeTodo",
+            payload: data
+        })
     }
 
     useEffect(()=>{

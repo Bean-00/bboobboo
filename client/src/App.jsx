@@ -8,7 +8,7 @@ import UserReducer from "./reducer/UserReducer.js"; // Flowbite-React에서 제�
 function App() {
 
     // const [loginUser, setLoginUser] = useState(null);
-    const [state, dispatch] = useReducer(UserReducer, null);
+    const [loginUser, dispatch] = useReducer(UserReducer, null);
 
     const getLoginUser = async () => {
         const {isError, data} = await getLoginUserAction()
@@ -25,7 +25,7 @@ function App() {
         getLoginUser();
     }, [])
     return (
-        <UserContext.Provider value={{loginUser: state, dispatch}}>
+        <UserContext.Provider value={{loginUser, dispatch}}>
             <TodoNavbar/>
             <Outlet/>
         </UserContext.Provider>

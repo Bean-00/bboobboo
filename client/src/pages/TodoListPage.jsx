@@ -1,10 +1,11 @@
 import {TodoStatusTab} from "../components/TodoStatusTab.jsx";
-import {useEffect, useState} from "react";
+import {useEffect, useReducer, useState} from "react";
 import {getTodoStatusListAction} from "../service/TodoService.js";
 import TodoList from "../components/TodoList.jsx";
-import {TodoStatusContextList} from "../context/TodoContext.js";
+import {TodoListContext, TodoStatusContextList} from "../context/TodoContext.js";
 import {useNavigate} from "react-router-dom";
 import TodoAddModal from "../components/TodoAddModal.jsx";
+import TodoReducer from "../reducer/TodoReducer.js";
 
 
 export default function TodoListPage() {
@@ -32,6 +33,7 @@ export default function TodoListPage() {
 
     return (
         <TodoStatusContextList.Provider value={todoStatusList}>
+
             <h2 className={"text-2xl flex justify-center font-bold mt-4 mb-4"}>TodoList</h2>
             {todoStatusList.length > 0 &&
                 <>
@@ -46,5 +48,6 @@ export default function TodoListPage() {
 
                 </>}
         </TodoStatusContextList.Provider>
+
     )
 }

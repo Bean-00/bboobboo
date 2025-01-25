@@ -1,11 +1,13 @@
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {Button, Modal} from "flowbite-react";
 import {addTodoAction} from "../service/TodoService.js";
+import {TodoListContext} from "../context/TodoContext.js";
 
-const TodoAddModal = ({openModal, onClose, onAdd, status}) => {
+const TodoAddModal = ({openModal, onClose, status}) => {
 
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
+    const [title, setTitle] = useState("")
+    const [content, setContent] = useState("")
+    const {dispatch} = useContext(TodoListContext)
 
 
     const clickAddBtn = async () => {
@@ -14,8 +16,8 @@ const TodoAddModal = ({openModal, onClose, onAdd, status}) => {
             alert(data.errorMessage)
             return;
         }
-        onAdd(data);
-        initializeModal();
+        dispatch({type: "addTodo", payload: data})
+        closeModal()
     }
 
     const handleTitleChange = (e) => {
