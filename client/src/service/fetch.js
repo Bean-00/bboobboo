@@ -4,9 +4,23 @@ export const fetchGet = async (url) => {
 }
 
 export const fetchPost = async (url, body = {}) => {
-    return _fetch(url, {method: "Post", credentials: 'include', headers: {
+    return _fetch(url, {
+        method: "Post", credentials: 'include', headers: {
             'Content-Type': 'application/json',
-        }, body: JSON.stringify(body)})
+        }, body: JSON.stringify(body)
+    })
+}
+
+export const fetchDelete = async (url) => {
+    return _fetch(url, {method: "Delete", credentials: 'include'})
+}
+
+export const fetchPut = async (url, body = {}) => {
+    return _fetch(url, {
+        method: "PUT", credentials: 'include', headers: {
+            'Content-Type': 'application/json',
+        }, body: JSON.stringify(body)
+    })
 }
 
 export const _fetch = async (url, requestInit) => {
@@ -14,6 +28,7 @@ export const _fetch = async (url, requestInit) => {
     let data = {}
     try {
         data = await res.json();
-    } catch (error) {}
+    } catch (error) {
+    }
     return {isError: !res.ok, data: data};
 }

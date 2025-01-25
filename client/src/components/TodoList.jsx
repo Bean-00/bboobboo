@@ -3,11 +3,14 @@ import {addTodoAction, getTodoListAction} from "../service/TodoService.js";
 import TodoCard from "./TodoCard.jsx";
 import LoadPannel from "./LoadPannel.jsx";
 import TodoAddModal from "./TodoAddModal.jsx";
+import TodoDetailModal from "./TodoDetailModal.jsx";
 
 export default function TodoList({status}) {
     const [isLoading, setIsLoading] = useState(false);
     const [todoList, setTodoList] = useState([]);
-    const [isOpenAddModal, setIsOpenAddModal] = useState();
+    const [isOpenAddModal, setIsOpenAddModal] = useState(false);
+    const [isOpenDetailModal, setIsOpenDetailModal] = useState(false);
+    const [currentTodo, setCurrentTodo] = useState(null);
 
     const getTodoList = async (status) => {
         setIsLoading(true);
@@ -22,15 +25,29 @@ export default function TodoList({status}) {
         setTodoList(data);
     }
 
-    const addTodo = async (todo) => {
-        const {isError, data} = await addTodoAction(todo)
-        if (isError) {
-            alert(data.errorMessage)
+    const addTodo = async (data) => {
+
+        setTodoList([...todoList, data])
+        setIsOpenAddModal(false)
+    }
+
+    const clickTodoCard = (todo) => {
+        setCurrentTodo(todo)
+        setIsOpenDetailModal(true)
+    }
+
+    const removeTodo = (data) => {
+        const idx = todoList.findIndex(todo => todo.id === data.id)
+        if (idx < 0) {
             return;
         }
-        setTodoList([...todoList, data])
-        console.log("data: ", data, "  :  ", isError)
-        setIsOpenAddModal(false)
+        setTodoList([...todoList.slice(0, idx), ...todoList.slice(idx + 1)])
+    }
+
+    const changeTodo = (data) => {
+      const idx = todoList.findIndex(todo => todo.id === data.id)
+      todoList[idx] = data
+      setTodoList([...todoList])
     }
 
     useEffect(() => {
@@ -51,7 +68,7 @@ export default function TodoList({status}) {
                 todoList.map(todo => {
                     return (
                         <div key={todo.id} className={"flex justify-center"}>
-                            <TodoCard todo={todo} className={"mt-5 cursor-pointer"}/>
+                            <TodoCard todo={todo} className={"mt-5 cursor-pointer"} onClick={clickTodoCard}/>
                         </div>
                     )
                 })
@@ -59,7 +76,15 @@ export default function TodoList({status}) {
 
             <TodoAddModal openModal={isOpenAddModal} onClose={() => {
                 setIsOpenAddModal(false)
-            }} onAdd={addTodo}/>
+            }} onAdd={addTodo}
+            status={status}/>
+            {
+                currentTodo &&
+                <TodoDetailModal openModal={isOpenDetailModal} onClose={() => {
+                    setIsOpenDetailModal(false)
+                }} todo={currentTodo} onRemove={removeTodo}
+                status={{status}} onChange={changeTodo}/>
+            }
         </>
     )
 }

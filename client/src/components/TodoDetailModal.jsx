@@ -1,0 +1,103 @@
+import {Button, Modal} from "flowbite-react";
+import {removeTodoAction, saveTodoAction} from "../service/TodoService.js";
+import {useEffect, useState} from "react";
+
+const TodoDetailModal = ({openModal, onClose, onChange, todo, onRemove}) => {
+
+    const [isEditingTitle, setIsEditingTitle] = useState(false);
+    const [title, setTitle] = useState(todo.title);
+
+    const closeModal = () => {
+        initialize()
+        onClose();
+    }
+
+    const removeTodo = async () => {
+        if (confirm("Really remove?")) {
+            const {isError, data} = await removeTodoAction(todo.id)
+            if (isError) {
+                alert(`${data.errorMessage}`)
+                return
+            }
+            onRemove(todo)
+            closeModal()
+        }
+    }
+
+    const onEnter = (e) => {
+        if (e.code !== "Enter")
+            return ;
+        saveTodo({
+            id: todo.id,
+            title: title,
+            content: todo.content,
+            statusCode: todo.statusCode
+        })
+    }
+
+    const saveTodo = async (editedTodo) => {
+        const {isError, data} = await saveTodoAction(editedTodo)
+        if (isError)
+            alert(data.errorMessage)
+        setIsEditingTitle(false);
+        onChange(data)
+    }
+
+    useEffect(()=>{
+        initialize()
+    }, [todo])
+
+    const initialize = () => {
+        setIsEditingTitle(false)
+        setTitle(todo.title);
+    }
+    return (
+        <>
+        <Modal show={openModal} onClose={closeModal}>
+            <Modal.Header>
+                {isEditingTitle ?
+                    <div>
+                        <input value={title} onChange={(e)=>{setTitle(e.target.value)}}
+                                onKeyUp={onEnter}/>
+                    </div> :
+                    <div onClick={ ()=>{setIsEditingTitle(true)}}>
+                        {title}
+                    </div>}
+
+                <svg
+                    onClick={removeTodo}
+                    style={{position: "absolute", top: "23px", right: "60px"}}
+                    className="w-6 h-6 text-red-500 dark:text-white cursor-pointer" aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                    viewBox="0 0 24 24">
+                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                          d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
+                </svg>
+
+        </Modal.Header>
+        <Modal.Body>
+            <div className={"h-[100px]"}>
+                {todo.content}
+            </div>
+            <h2 className={"text-xl"}>Item</h2>
+            <hr/>
+            <ul className={"mt-4"}>
+
+                <li className={"text-base text-gray-500 flex gap-x-1 cursor-pointer"}>
+                    <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                         viewBox="0 0 24 24">
+                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M12 7.757v8.486M7.757 12h8.486M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                    </svg>
+                    Add Item
+                </li>
+            </ul>
+        </Modal.Body>
+        </Modal>
+</>
+)
+}
+
+export default TodoDetailModal

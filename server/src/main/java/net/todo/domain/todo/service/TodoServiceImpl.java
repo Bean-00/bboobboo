@@ -40,7 +40,9 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
+    @Transactional
     public void deleteTodoDomain(int id) {
+        todoRepository.deleteItemByDomainId(id);
         todoRepository.deleteDomain(id);
     }
 
