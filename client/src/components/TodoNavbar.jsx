@@ -1,9 +1,10 @@
 import {Avatar, Dropdown, Navbar} from "flowbite-react";
 import logo from "../assets/react.svg"
-import {Link, Router, useNavigate, useNavigation} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {logoutAction} from "../service/SecurityService.js";
-import {useContext} from "react";
-import {UserContext} from "../context/UserContext.js";
+import userStore from "../store/UserStore.js";
+// import {useContext} from "react";
+// import {UserContext} from "../context/UserContext.js";
 
 const TodoNavLink = ({to, text}) => {
     return (
@@ -17,7 +18,8 @@ const TodoNavLink = ({to, text}) => {
 
 export function TodoNavbar() {
 
-    const {loginUser, dispatch} = useContext(UserContext);
+    // const {loginUser, dispatch} = useContext(UserContext);
+    const {loginUser, setUser} = userStore()
 
     const navigate = useNavigate();
 
@@ -29,7 +31,8 @@ export function TodoNavbar() {
             return;
         }
         alert('성공적인 로그아웃');
-        dispatch({type: "setUser", payload: null});
+        // dispatch({type: "setUser", payload: null});
+        setUser(null);
         navigate('/login')
     }
 
@@ -51,7 +54,7 @@ export function TodoNavbar() {
                                 rounded/>
                     }
                 >
-                    {loginUser?.id?
+                    {loginUser?.id ?
                         <>
                             <Dropdown.Header>
                                 <span className="block text-sm">{loginUser.name}</span>

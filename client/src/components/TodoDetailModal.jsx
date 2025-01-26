@@ -2,29 +2,32 @@ import {Button, Modal} from "flowbite-react";
 import {removeTodoAction, saveTodoAction} from "../service/TodoService.js";
 import {useContext, useEffect, useState} from "react";
 import {TodoListContext} from "../context/TodoContext.js";
+import todoStore from "../store/TodoStore.js";
 
 const TodoDetailModal = ({openModal, onClose, todo }) => {
 
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [title, setTitle] = useState(todo.title);
-    const {dispatch} = useContext(TodoListContext)
+    // const {dispatch} = useContext(TodoListContext)
+    const {removeTodo, changeTodo} = todoStore()
 
     const closeModal = () => {
         initialize()
         onClose();
     }
 
-    const removeTodo = async () => {
+    const remove = async () => {
         if (confirm("Really remove?")) {
             const {isError, data} = await removeTodoAction(todo.id)
             if (isError) {
                 alert(`${data.errorMessage}`)
                 return
             }
-            dispatch({
-                type: "removeTodo",
-                payload: todo.id
-            })
+            // dispatch({
+            //     type: "removeTodo",
+            //     payload: todo.id
+            // })
+            removeTodo(todo.id)
             closeModal()
         }
     }
@@ -45,10 +48,11 @@ const TodoDetailModal = ({openModal, onClose, todo }) => {
         if (isError)
             alert(data.errorMessage)
         setIsEditingTitle(false);
-        dispatch( {
-            type: "changeTodo",
-            payload: data
-        })
+        // dispatch( {
+        //     type: "changeTodo",
+        //     payload: data
+        // })
+        changeTodo(todo)
     }
 
     useEffect(()=>{
@@ -73,7 +77,7 @@ const TodoDetailModal = ({openModal, onClose, todo }) => {
                     </div>}
 
                 <svg
-                    onClick={removeTodo}
+                    onClick={remove}
                     style={{position: "absolute", top: "23px", right: "60px"}}
                     className="w-6 h-6 text-red-500 dark:text-white cursor-pointer" aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
