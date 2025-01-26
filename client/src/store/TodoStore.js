@@ -2,10 +2,12 @@ import {create} from "zustand";
 
 const TodoStore = create((set)=>({
     todoList: [],
-    setTodoList: (todoList) => set((state)=> ({ todoList })),
+    todoStatusList: [],
+    setTodoList: (todoList) => set((state)=> ({ todoList, todoStatusList: state.todoStatusList })),
     addTodo: (todo) => set((state)=> ({todoList: [...state.todoList, todo]})),
     removeTodo: (todoId) => set((state) => ({todoList: remove(state.todoList, todoId)})),
-    changeTodo: (newTodo) => set((state)=> ({todoList: update(state.todoList, newTodo)}))
+    changeTodo: (newTodo) => set((state)=> ({todoList: update(state.todoList, newTodo)})),
+    setTodoStatusList: (todoStatusList) => set((state)=> ({todoStatusList, todoList: state.todoList }))
 }))
 
 const remove = (todoList, id) => {
