@@ -20,6 +20,6 @@ public class SecurityController {
 
     @GetMapping("/login-user")
     public ResponseEntity<User.UserResponse> getLoginUser() {
-        return ResponseEntity.ok(securityService.getLoginUser().map(User.Principal::toResponse).orElse(null));
+        return ResponseEntity.ok(securityService.getLoginUser().map(User.UserAccount::toResponse).orElse(null));
     }
 }

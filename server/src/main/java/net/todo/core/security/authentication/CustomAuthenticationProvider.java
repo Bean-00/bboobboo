@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Map;
@@ -17,11 +18,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private final PasswordEncoder passwordEncoder;
-    private final SecurityService securityService;
+    private final UserDetailsService securityService;
 
     private Map<String, User.UserAccount> userDB = new ConcurrentHashMap<>();
 
-    public CustomAuthenticationProvider(PasswordEncoder passwordEncoder, SecurityService securityService) {
+    public CustomAuthenticationProvider(PasswordEncoder passwordEncoder, UserDetailsService securityService) {
         this.passwordEncoder = passwordEncoder;
         this.securityService = securityService;
     }
@@ -51,13 +52,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         CustomAuthenticationToken token = (CustomAuthenticationToken) authentication;
         //실질적인 인증 로직 => 인증되었으면 토큰 발행해주고 아니면 null, exception 리턴
 
-        User.UserAccount account = securityService.loadUserByUserName(token.getName());
+        User.UserAccount account = (User.UserAccount)securityService.loadUserByUsername(token.getName());
 
         if (account != null
                 && passwordEncoder.matches(token.getCredentials(), account.getPassword())) {
             //인증 성공
                 return CustomAuthenticationToken.builder()
-                        .principal(User.Principal.builder()
+                        .principal(User.UserAccount.builder()
                                 .id(account.getId())
                                 .email(account.getEmail())
                                 .name(account.getName())

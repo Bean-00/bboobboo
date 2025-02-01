@@ -17,7 +17,7 @@ import java.util.Set;
 @Builder
 public class CustomAuthenticationToken implements Authentication {
 
-    private User.Principal principal;
+    private User.UserAccount principal;
     private boolean authenticated;
     private String credentials;
     private Set<GrantedAuthority> authorities;
@@ -27,7 +27,7 @@ public class CustomAuthenticationToken implements Authentication {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Optional.ofNullable(principal)
-                .map(User.Principal::getRole)
+                .map(User.UserAccount::getRole)
                 .orElse(Set.of());
     }
 
@@ -35,7 +35,7 @@ public class CustomAuthenticationToken implements Authentication {
     public String getName() {
         //UsernamePasswordAuthenticationFilter에서는 ID: username이기 떄문에 getName도 ID가 되어야 함
         return Optional.ofNullable(principal)
-                .map(User.Principal::getEmail)
+                .map(User.UserAccount::getEmail)
                 .orElse(null);
     }
 }
