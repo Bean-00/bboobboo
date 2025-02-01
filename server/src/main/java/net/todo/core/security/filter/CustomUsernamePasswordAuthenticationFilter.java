@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
 
@@ -28,12 +29,15 @@ import static net.todo.core.exception.CustomExceptionCode.FAILURE_AUTHENTICATION
 
 public class CustomUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    public CustomUsernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager, SecurityContextRepository securityContextRepository) {
+    public CustomUsernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager,
+                                                      SecurityContextRepository securityContextRepository,
+                                                        RememberMeServices rememberMeServices) {
         super(authenticationManager);
         setFilterProcessesUrl("/api/security/login");
         setAuthenticationSuccessHandler(getAuthenticationSuccessHandler());
         setAuthenticationFailureHandler(getAuthenticationFailureHandler());
         setSecurityContextRepository(securityContextRepository);
+        setRememberMeServices(rememberMeServices);
     }
 
     private AuthenticationSuccessHandler getAuthenticationSuccessHandler() {
@@ -59,6 +63,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
 
         try (InputStream inputStream = request.getInputStream()) {
             User.LoginRequest loginRequest = objectMapper.readValue(inputStream, User.LoginRequest.class);
+            request.setAttribute("rememberMe", loginRequest.isRememberMe());
 //            User.Principal principal = User.Principal.builder()
 //                    .email(loginRequest.getEmail())
 //                    .build();

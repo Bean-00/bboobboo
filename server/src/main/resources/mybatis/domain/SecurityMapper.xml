@@ -5,6 +5,7 @@
             resultType="net.todo.core.security.dto.User$UserAccount">
         select
             id,
+            email,
             nickname as name,
             password,
             auth as role

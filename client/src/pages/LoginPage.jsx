@@ -19,7 +19,7 @@ const LoginPage = () => {
 
     return (
         <div className={"flex justify-center mt-7"}>
-            <LoginForm onSuccess={loginSuccess} onFailure={(error) => alert(error.errorMessage)}/>
+            <LoginForm onSuccess={loginSuccess} onFailure={(error) => alert("로그인 실패")}/>
         </div>
 
     )
