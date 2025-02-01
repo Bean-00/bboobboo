@@ -1,7 +1,5 @@
 package net.todo.core.security.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import net.todo.core.security.constant.UserRole;
 import org.springframework.security.core.GrantedAuthority;
