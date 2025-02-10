@@ -3,6 +3,7 @@ import {removeTodoAction, saveTodoAction} from "../service/TodoService.js";
 import {useContext, useEffect, useState} from "react";
 import {TodoListContext} from "../context/TodoContext.js";
 import todoStore from "../store/TodoStore.js";
+import FileUploader from "./FileUploader.jsx";
 
 const TodoDetailModal = ({openModal, onClose, todo }) => {
 
@@ -87,29 +88,44 @@ const TodoDetailModal = ({openModal, onClose, todo }) => {
                 </svg>
 
         </Modal.Header>
-        <Modal.Body>
-            <div className={"h-[100px]"}>
-                {todo.content}
-            </div>
-            <h2 className={"text-xl"}>Item</h2>
-            <hr/>
-            <ul className={"mt-4"}>
-
-                <li className={"text-base text-gray-500 flex gap-x-1 cursor-pointer"}>
-                    <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
-                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
-                         viewBox="0 0 24 24">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M12 7.757v8.486M7.757 12h8.486M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                    </svg>
-                    Add Item
-                </li>
-            </ul>
-        </Modal.Body>
+            <Modal.Body>
+                <div className={"h-[100px]"}>
+                    {todo.content}
+                </div>
+                <h2 className={"text-xl"}>Item</h2>
+                <hr/>
+                <ul className={"mt-4"}>
+                    <li className={"text-base text-gray-500 flex gap-x-1 cursor-pointer"}>
+                        <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                             xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                             viewBox="0 0 24 24">
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M12 7.757v8.486M7.757 12h8.486M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        </svg>
+                        Add Item
+                    </li>
+                </ul>
+                <h2 className={"text-xl mt-5"}>Files</h2>
+                <hr/>
+                <FileUploader multiple={true} onUploaded={(data)=>{console.log("$$$$$$$: ", data)}} onError={(data)=>{alert(data.errorMessage)}}>
+                    <div className={"mt-4 flex items-center justify-center"}>
+                        <div className={"text-base text-gray-500 flex gap-x-1 cursor-pointer border p-5"}>
+                            <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                 xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                 viewBox="0 0 24 24">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M12 7.757v8.486M7.757 12h8.486M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                            </svg>
+                            첨부파일 선택
+                        </div>
+                    </div>
+                </FileUploader>
+            </Modal.Body>
         </Modal>
-</>
-)
+        </>
+    )
 }
 
 export default TodoDetailModal

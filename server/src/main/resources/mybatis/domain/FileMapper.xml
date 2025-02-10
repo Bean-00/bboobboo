@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.todo.core.file.repository.FileMapper">
+
+    <insert id="persistFileInfo" parameterType="net.todo.core.file.dto.TodoFile$Domain"
+            useGeneratedKeys="true"
+            keyProperty="fileId">
+        insert into todo_file(writer_id, file_name, dir_path, sys_file_name, type, size)
+        values (#{writerId}, #{fileName}, #{dirPath}, #{sysFileName}, #{type}, #{size})
+    </insert>
+
+
+</mapper>

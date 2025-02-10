@@ -13,3 +13,12 @@ jasypt:
 logging:
   level:
     root: DEBUG
+
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 500MB
+
+file:
+  uploaded-path: /Users/bean/Development/bboobbooFiles

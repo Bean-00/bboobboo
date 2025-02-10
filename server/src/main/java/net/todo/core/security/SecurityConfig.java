@@ -41,7 +41,7 @@ import java.util.List;
 import static net.todo.core.exception.CustomExceptionCode.*;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 public class SecurityConfig {
 
     private final List<String> allowedRequestUrlList = List.of(
