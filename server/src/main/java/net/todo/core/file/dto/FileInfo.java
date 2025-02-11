@@ -1,15 +1,11 @@
 package net.todo.core.file.dto;
 
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
-public class TodoFile {
+public class FileInfo {
     @Getter
     @Setter
     @NoArgsConstructor

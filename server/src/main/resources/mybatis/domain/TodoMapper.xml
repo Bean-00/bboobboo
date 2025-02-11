@@ -15,7 +15,8 @@
         where dmn.is_del = 0
     </sql>
 
-    <select id="findAllDomain" parameterType="net.todo.domain.todo.dto.Todo$Condition" resultType="net.todo.domain.todo.dto.Todo$Domain">
+    <select id="findAllDomain" parameterType="net.todo.domain.todo.dto.Todo$Condition"
+            resultType="net.todo.domain.todo.dto.Todo$Domain">
         <include refid="findDomain"></include>
         <if test="status != null ">
             and status = #{status}
@@ -55,16 +56,29 @@
 
     <delete id="deleteItemByDomainId" parameterType="int">
         update todo_item
-            SET is_del    = 1,
-                delete_dt = now()
+        SET is_del    = 1,
+            delete_dt = now()
         WHERE domain_id = #{id}
     </delete>
 
     <select id="findAllStatus" resultType="net.todo.domain.todo.dto.Todo$Status">
-        select
-            id,
-            description,
-            icon
+        select id,
+               description,
+               icon
         FROM todo_status
+    </select>
+
+    <insert id="persistFiles" parameterType="net.todo.domain.todo.dto.Todo$File">
+        insert into todo_file_mapping(file_id, domain_id)
+        <foreach collection="list" item="file" open="values" separator=",">
+            (#{file.fileId}, #{file.domainId})
+        </foreach>
+    </insert>
+
+    <select id="findAllFiles" resultType="net.todo.domain.todo.dto.Todo$File" parameterType="int">
+        select f.id, f.sys_file_name as uniqueFileName, f.file_name, tf.domain_id
+        from file f
+                 INNER JOIN todo_file_mapping tf on f.id = tf.file_id
+        where tf.domain_id = #{id}
     </select>
 </mapper>

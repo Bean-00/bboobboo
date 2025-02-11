@@ -50,4 +50,14 @@ public class TodoServiceImpl implements TodoService {
     public List<Todo.Status> getTodoStatusList() {
         return todoRepository.findAllStatus();
     }
+
+    @Override
+    public void addTodoFiles(List<Todo.File> files) {
+        todoRepository.persistFiles(files);
+    }
+
+    @Override
+    public List<Todo.File> getTodoFileList(int id) {
+        return todoRepository.findAllFiles(id);
+    }
 }

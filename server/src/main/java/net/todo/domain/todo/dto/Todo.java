@@ -122,4 +122,16 @@ public class Todo {
         private Integer status;
         private Integer userId;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class File {
+        private int domainId;
+        private int fileId;
+        private String uniqueFileName;
+        private String fileName;
+    }
 }

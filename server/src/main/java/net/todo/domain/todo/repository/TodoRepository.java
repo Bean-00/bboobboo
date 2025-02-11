@@ -19,4 +19,8 @@ public interface TodoRepository {
     List<Todo.Status> findAllStatus();
 
     void deleteItemByDomainId(int id);
+
+    void persistFiles(List<Todo.File> files);
+
+    List<Todo.File> findAllFiles(int id);
 }

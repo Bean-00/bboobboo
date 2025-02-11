@@ -76,4 +76,17 @@ public class TodoController {
     public ResponseEntity<List<Todo.Status>> getTodoStatusList() {
         return ResponseEntity.ok(todoService.getTodoStatusList());
     }
+
+    @GetMapping("{id}/files")
+    @Operation(summary = "Todo 파일 조회")
+    public ResponseEntity<List<Todo.File>> getTodoFileList(@PathVariable int id) {
+            return ResponseEntity.ok(todoService.getTodoFileList(id));
+    }
+
+    @PostMapping("/files")
+    @Operation(summary = "Todo 파일 저장")
+    public ResponseEntity<Void> addTodoFile(@RequestBody List<Todo.File> files) {
+        todoService.addTodoFiles(files);
+        return ResponseEntity.ok().build();
+    }
 }
