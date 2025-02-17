@@ -36,7 +36,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         setFilterProcessesUrl("/api/security/login");
         setAuthenticationSuccessHandler(getAuthenticationSuccessHandler());
         setAuthenticationFailureHandler(getAuthenticationFailureHandler());
-        setSecurityContextRepository(securityContextRepository);
+        setSecurityContextRepository(securityContextRepository); //기본적으로 SessionRespository에 저장되지 않고 RequestRepository에 저장되어 추가!!
         setRememberMeServices(rememberMeServices);
     }
 
