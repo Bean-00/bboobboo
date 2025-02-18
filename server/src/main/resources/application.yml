@@ -22,3 +22,6 @@ spring:
 
 file:
   uploaded-path: /Users/bean/Development/bboobbooFiles
+
+jwt:
+  atk-expired-time: 1800

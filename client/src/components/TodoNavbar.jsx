@@ -25,11 +25,12 @@ export function TodoNavbar() {
 
 
     const logout = async () => {
-        const {isError, data} = await logoutAction();
-        if (isError) {
-            alert(data.errorMessage);
-            return;
-        }
+        // const {isError, data} = await logoutAction();
+        // if (isError) {
+        //     alert(data.errorMessage);
+        //     return;
+        // }
+        sessionStorage.clear()
         alert('성공적인 로그아웃');
         // dispatch({type: "setUser", payload: null});
         setUser(null);
@@ -59,7 +60,7 @@ export function TodoNavbar() {
                             <Dropdown.Header>
                                 <span className="block text-sm">{loginUser.name}</span>
                             </Dropdown.Header>
-                            <Dropdown.Item onClick={logoutAction}>Sign out</Dropdown.Item>
+                            <Dropdown.Item onClick={logout}>Sign out</Dropdown.Item>
                         </> :
                         <Dropdown.Header>
                             <Link to={'/login'}>

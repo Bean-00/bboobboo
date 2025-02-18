@@ -5,7 +5,10 @@ import lombok.RequiredArgsConstructor;
 import net.todo.core.exception.CustomExceptionHandler;
 import net.todo.core.security.authentication.CustomAuthenticationProvider;
 import net.todo.core.security.filter.CustomUsernamePasswordAuthenticationFilter;
+import net.todo.core.security.filter.JwtAuthenticationFilter;
+import net.todo.core.security.filter.JwtVerifyFilter;
 import net.todo.core.security.service.CustomRememberMeService;
+import net.todo.core.security.service.JwtService;
 import net.todo.core.security.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +20,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +33,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
@@ -50,29 +55,27 @@ public class SecurityConfig {
     );
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager,
-                                           SecurityContextRepository securityContextRepository,
-                                           RememberMeServices rememberMeServices) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter, JwtVerifyFilter jwtVerifyFilter) throws Exception {
         http.authorizeHttpRequests(auth -> auth.requestMatchers(allowedRequestUrlList.toArray(String[]::new))
                         .permitAll()
                         .anyRequest()
                         .authenticated())
                 .formLogin(formLogin -> formLogin.disable())
-                .httpBasic(httpBasic -> httpBasic.disable())
+                .addFilterAt(jwtVerifyFilter, BasicAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(configurationSource()))
-                .addFilterAt(new CustomUsernamePasswordAuthenticationFilter(authenticationManager,
-                        securityContextRepository, rememberMeServices),
-                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(ex -> ex.accessDeniedHandler(getAccessDeniedHandler())
                         .authenticationEntryPoint(getAuthenticationEntryPoint()))
-                .rememberMe(r -> r.rememberMeServices(rememberMeServices))
-                .logout(logout -> logout.logoutUrl("/api/security/logout")
-                        .logoutSuccessHandler(getLogoutSuccessHandler())
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID"));
+                .logout(logout -> logout.logoutUrl("/api/security/logout"));
 
         return http.build();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtService) {
+        return new JwtAuthenticationFilter(authenticationManager, jwtService);
     }
 
     private LogoutSuccessHandler getLogoutSuccessHandler() {
@@ -91,6 +94,7 @@ public class SecurityConfig {
             corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
             corsConfiguration.setAllowCredentials(true);
             corsConfiguration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+            corsConfiguration.setExposedHeaders(List.of("atk"));
 
             return corsConfiguration;
         };
@@ -121,38 +125,15 @@ public class SecurityConfig {
        return new ProviderManager(List.of(daoAuthenticationProvider));
     }
 
-//    @Bean
-//    public AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder, SecurityService securityService) {
-//        return new CustomAuthenticationProvider(passwordEncoder, securityService);
-//    }
-
     @Bean
-    public SecurityContextRepository securityContextRepository() {
-        return new HttpSessionSecurityContextRepository();
+    public JwtVerifyFilter jwtVerifyFilter(AuthenticationManager authenticationManager, UserDetailsService userDetailsService, JwtService jwtService) {
+        return new JwtVerifyFilter(authenticationManager, userDetailsService, jwtService);
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public RememberMeServices rememberMeServices(UserDetailsService userDetailsService, PersistentTokenRepository persistentTokenRepository) {
-        return new CustomRememberMeService("uniqueAndSecretKey", userDetailsService, persistentTokenRepository);
-    }
-
-    @Bean
-    public PersistentTokenRepository persistentTokenRepository(DataSource dataSource) {
-        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
-        tokenRepository.setDataSource(dataSource);
-
-        try {
-            tokenRepository.removeUserTokens("test");
-        } catch (Exception e) {
-            tokenRepository.setCreateTableOnStartup(true);
-        }
-
-        return tokenRepository;
-
-    }
 }
