@@ -11,3 +11,7 @@ spring:
 server:
   log:
     path: /Users/bean/Development/bboobboo/server/logs
+
+
+oauth2:
+  client-host: http://localhost:5173

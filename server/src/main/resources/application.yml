@@ -19,6 +19,17 @@ spring:
     multipart:
       enabled: true
       max-file-size: 500MB
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ENC(ZZPjnmauGH2uvT8X/lI2b63Xi/ttt9bIseRIDIStGBN5VE72VcaGSz3ZpbgkHjdWh3UPQ6knYPimuW22EkH5dd2UysORO5zv23ZceSXiK8POU/TkTBfgIrjDt8v6vDX5)
+            client-secret: ENC(zJU12eBp8YiPiZxUeMGxs1TjuB2fRzI4e13pz9Rbxf4OksZllCvJ7GqZU3zunIylyiTucVST1KI=)
+            scope:
+              - email
+              - profile
+            redirect-uri: "{baseUrl}/api/oauth2/{registrationId}/callback"
 
 file:
   uploaded-path: /Users/bean/Development/bboobbooFiles

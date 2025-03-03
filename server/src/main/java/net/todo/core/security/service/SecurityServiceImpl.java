@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -24,6 +25,17 @@ public class SecurityServiceImpl implements SecurityService, UserDetailsService 
                 .map(SecurityContext::getAuthentication)
                 .filter(authentication -> authentication.getPrincipal() instanceof User.UserAccount)
                 .map(authentication -> (User.UserAccount) authentication.getPrincipal());
+    }
+
+    @Override
+    public User.UserAccount loadUserByGoogleId(String googleId) {
+        return securityRepository.findUserByGoogleId(googleId);
+    }
+
+    @Override
+    public User.UserAccount joinUser(User.UserAccount user) {
+        securityRepository.persistUser(user);
+        return user;
     }
 
     @Override

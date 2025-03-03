@@ -7,6 +7,7 @@ import net.todo.core.security.authentication.CustomAuthenticationProvider;
 import net.todo.core.security.filter.CustomUsernamePasswordAuthenticationFilter;
 import net.todo.core.security.filter.JwtAuthenticationFilter;
 import net.todo.core.security.filter.JwtVerifyFilter;
+import net.todo.core.security.oath2.CustomOauth2SuccessHandler;
 import net.todo.core.security.service.CustomRememberMeService;
 import net.todo.core.security.service.JwtService;
 import net.todo.core.security.service.SecurityService;
@@ -51,16 +52,22 @@ public class SecurityConfig {
 
     private final List<String> allowedRequestUrlList = List.of(
             "/api/security/login",
-            "/api/security/login-user"
+            "/api/security/login-user",
+            "/api/oauth2/**",
+            "/error",
+            "/api/oauth2/google"
     );
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter, JwtVerifyFilter jwtVerifyFilter) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter, JwtVerifyFilter jwtVerifyFilter, CustomOauth2SuccessHandler customOauth2SuccessHandler) throws Exception {
         http.authorizeHttpRequests(auth -> auth.requestMatchers(allowedRequestUrlList.toArray(String[]::new))
                         .permitAll()
                         .anyRequest()
                         .authenticated())
                 .formLogin(formLogin -> formLogin.disable())
+                .oauth2Login(oath2 -> oath2.authorizationEndpoint(authorizationEndpointConfig -> authorizationEndpointConfig.baseUri("/api/oauth2/authorization")
+                        ).redirectionEndpoint(redirectionEndpointConfig -> redirectionEndpointConfig.baseUri("/api/oauth2/*/callback"))
+                        .successHandler(customOauth2SuccessHandler))
                 .addFilterAt(jwtVerifyFilter, BasicAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(configurationSource()))
@@ -71,6 +78,11 @@ public class SecurityConfig {
                 .logout(logout -> logout.logoutUrl("/api/security/logout").logoutSuccessHandler(getLogoutSuccessHandler()).deleteCookies("rtk"));
 
         return http.build();
+    }
+
+    @Bean
+    public CustomOauth2SuccessHandler customOauth2SuccessHandler(SecurityService securityService, JwtService jwtService) {
+        return new CustomOauth2SuccessHandler(securityService, jwtService);
     }
 
     @Bean
@@ -117,12 +129,12 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-       DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
 
-       daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-       daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
 
-       return new ProviderManager(List.of(daoAuthenticationProvider));
+        return new ProviderManager(List.of(daoAuthenticationProvider));
     }
 
     @Bean
