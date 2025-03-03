@@ -25,3 +25,4 @@ file:
 
 jwt:
   atk-expired-time: 1800
+  rtk-expired-time: 1209600

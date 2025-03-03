@@ -4,7 +4,7 @@ import {useContext, useEffect, useState} from "react";
 import {TodoListContext} from "../context/TodoContext.js";
 import todoStore from "../store/TodoStore.js";
 import FileUploader from "./FileUploader.jsx";
-import {FILE_API_URL} from "../service/FileService.js";
+import {FILE_API_URL, getImageAction} from "../service/FileService.js";
 
 const TodoDetailModal = ({openModal, onClose, todo}) => {
 
@@ -58,27 +58,65 @@ const TodoDetailModal = ({openModal, onClose, todo}) => {
         changeTodo(todo)
     }
 
+    const getImage = async (file) => {
+        const {data, isError} = await getImageAction(file?.uniqueFileName)
+        if (isError) {
+            console.error("!!!!: ", data.errorMessage)
+            return
+        }
+
+        console.log(data)
+        const url = `${FILE_API_URL}/image/${file?.uniqueFileName}`
+        console.log(url)
+    }
+
     useEffect(() => {
         initialize()
+        getTodoFiles()
     }, [todo])
 
     const initialize = () => {
         setIsEditingTitle(false)
-        setTitle(todo.title);
-        getTodoFiles();
+        setTitle(todo.title)
     }
 
     const getTodoFiles = async () => {
-        const {data, isError} = await getTodoFilesAction(todo.id);
+        const {data, isError} = await getTodoFilesAction(todo.id)
         if (isError) {
             alert(data.errorMessage)
             return
         }
+        for (let f of data) {
+            if (f.blob) continue
+            const blob = await getImageBlob(f)
+            f.blob = blob
+        }
         setFiles(data)
     }
 
+    const getImageBlob = async (file) => {
+        const {data, isError} = await getImageAction(file?.uniqueFileName)
+        if (isError) {
+            alert(data.errorMessage)
+            return
+        }
+        const reader = new FileReader()
+
+        await new Promise((resolve, reject) => {
+            reader.onload = resolve
+            reader.onerror = reject
+            reader.readAsDataURL(data)
+        })
+
+        return reader.result
+
+    }
+
     const uploadTodoFiles = async (uploadedFiles) => {
-        uploadedFiles.forEach(file => file.domainId = todo.id)
+        uploadedFiles.forEach(async (file) => {
+            file.domainId = todo.id
+            file.blob = await getImageBlob(file)
+        })
         const {data, isError} = await addTodoFileAction(uploadedFiles)
         if (isError) {
             console.error(data.errorMessage)
@@ -139,7 +177,8 @@ const TodoDetailModal = ({openModal, onClose, todo}) => {
                         {files.map((file) => (
                             (<div className={"mt-3 mr-3 w-[100px] h-[100px] border-2 flex items-center justify-center"}
                                   key={file.fileId}>
-                                <img src={`${FILE_API_URL}/image/${file?.uniqueFileName}`} alt={file.fileName}/>
+                                {/*<img src={`${FILE_API_URL}/image/${file?.uniqueFileName}`} alt={file.fileName}/>*/}
+                                <img src={file.blob} alt={file.fileName}/>
                             </div>)
                         ))}
                         <FileUploader multiple={true} onUploaded={uploadTodoFiles} onError={(data) => {

@@ -2,6 +2,7 @@ package net.todo.core.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.todo.core.exception.CustomException;
@@ -9,6 +10,7 @@ import net.todo.core.exception.CustomExceptionCode;
 import net.todo.core.exception.CustomExceptionHandler;
 import net.todo.core.security.dto.User;
 import net.todo.core.security.service.JwtService;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,7 +45,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         try (InputStream inputStream = request.getInputStream()) {
             User.LoginRequest loginRequest = objectMapper.readValue(inputStream, User.LoginRequest.class);
-
+            request.setAttribute("rememberMe", loginRequest.isRememberMe());
             return this.getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         } catch (IOException e) {
@@ -54,10 +56,18 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private AuthenticationSuccessHandler getAuthenticationSuccessHandler() {
         return (request, response, authentication) -> {
             response.setHeader("atk", BEARER + jwtService.createAccessToken(authentication));
+
+            if ((boolean) request.getAttribute("rememberMe")) {
+                Cookie cookie = new Cookie("rtk", jwtService.createRefreshToken(authentication));
+                cookie.setMaxAge((int) jwtService.getRtkExpiredTime());
+                cookie.setPath("/");
+                response.addCookie(cookie);
+            }
+
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
             response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write(new Gson().toJson(((User.UserAccount)authentication.getPrincipal()).toResponse()));
+            response.getWriter().write(new Gson().toJson(((User.UserAccount) authentication.getPrincipal()).toResponse()));
         };
     }
 

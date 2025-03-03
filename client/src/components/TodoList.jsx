@@ -4,7 +4,6 @@ import TodoCard from "./TodoCard.jsx";
 import LoadPannel from "./LoadPannel.jsx";
 import TodoAddModal from "./TodoAddModal.jsx";
 import TodoDetailModal from "./TodoDetailModal.jsx";
-import {TodoListContext} from "../context/TodoContext.js";
 import todoStore from "../store/TodoStore.js";
 // import TodoReducer from "../reducer/TodoReducer.js";
 

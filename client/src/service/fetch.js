@@ -1,6 +1,6 @@
-export const fetchGet = async (url) => {
+export const fetchGet = async (url, isBlob = false) => {
 
-    return _fetch(url, {method: "Get", credentials: 'include'})
+    return _fetch(url, {method: "Get", credentials: 'include'}, isBlob)
 }
 
 export const fetchPost = async (url, body = {}) => {
@@ -23,7 +23,7 @@ export const fetchPut = async (url, body = {}) => {
     })
 }
 
-export const _fetch = async (url, requestInit) => {
+export const _fetch = async (url, requestInit, isBlob = false) => {
 
     if (sessionStorage.getItem('atk')) {
         requestInit.headers = {...requestInit.headers, 'Authorization': sessionStorage.getItem('atk')}
@@ -35,7 +35,7 @@ export const _fetch = async (url, requestInit) => {
         if (res.headers.get('atk')) {
             sessionStorage.setItem("atk", res.headers.get('atk'));
         }
-        data = await res.json();
+        data = isBlob? await res.blob() : await res.json();
     } catch (error) {
     }
     return {isError: !res.ok, data: data};

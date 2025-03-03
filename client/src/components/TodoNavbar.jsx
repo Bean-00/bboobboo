@@ -25,11 +25,11 @@ export function TodoNavbar() {
 
 
     const logout = async () => {
-        // const {isError, data} = await logoutAction();
-        // if (isError) {
-        //     alert(data.errorMessage);
-        //     return;
-        // }
+        const {isError, data} = await logoutAction();
+        if (isError) {
+            alert(data.errorMessage);
+            return;
+        }
         sessionStorage.clear()
         alert('성공적인 로그아웃');
         // dispatch({type: "setUser", payload: null});

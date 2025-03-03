@@ -76,7 +76,7 @@
     </insert>
 
     <select id="findAllFiles" resultType="net.todo.domain.todo.dto.Todo$File" parameterType="int">
-        select f.id, f.sys_file_name as uniqueFileName, f.file_name, tf.domain_id
+        select f.id as fileId, f.sys_file_name as uniqueFileName, f.file_name, tf.domain_id
         from file f
                  INNER JOIN todo_file_mapping tf on f.id = tf.file_id
         where tf.domain_id = #{id}
