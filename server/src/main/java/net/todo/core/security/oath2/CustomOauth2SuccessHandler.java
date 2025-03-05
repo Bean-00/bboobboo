@@ -20,6 +20,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -45,35 +46,48 @@ public class CustomOauth2SuccessHandler implements AuthenticationSuccessHandler 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
 
-        User.UserAccount user = new User.UserAccount();
-
         if ("google".equals(registrationId)) {
             //Todo 1. OAuthUser sub(uniqueID) DB에 있는지 체크
-            user = securityService.loadUserByGoogleId(oAuth2User.getAttribute("sub"));
+            User.UserAccount user = securityService.loadUserByGoogleId(oAuth2User.getAttribute("sub"));
 
             //Todo DB에 있다면? accessToken, refreshToken 발급, 없다면 join page로 redirect ?name={}&email={} 여기서는 바로 가입 시키고 accessToken 발급 => 다른 서비스에서는 추가적인 정보를 입력받을 수 있도록 해보장
             if (Objects.isNull(user)) {
-                user = securityService.joinUser(User.UserAccount.builder()
+                securityService.joinUser(User.UserAccount.builder()
                         .googleId(oAuth2User.getAttribute("sub"))
                         .email(oAuth2User.getAttribute("email"))
                         .name(oAuth2User.getAttribute("name"))
                         .role(Set.of(new SimpleGrantedAuthority(USER.toString())))
                         .build());
             }
+        } else if ("kakao".equals(registrationId)) {
+            String kakaoId = ((Long) oAuth2User.getAttribute("id")).toString();
+            User.UserAccount user = securityService.loadUserByKakaoId(kakaoId);
 
+            //Todo DB에 있다면? accessToken, refreshToken 발급, 없다면 join page로 redirect ?name={}&email={} 여기서는 바로 가입 시키고 accessToken 발급 => 다른 서비스에서는 추가적인 정보를 입력받을 수 있도록 해보장
+            if (Objects.isNull(user)) {
+                securityService.joinUser(User.UserAccount.builder()
+                        .kakaoId(kakaoId)
+                        .name(Optional.ofNullable(oAuth2User.getAttribute("kakao_account"))
+                                .map(r -> ((LinkedHashMap) r).get("profile"))
+                                .map(r -> (String) ((LinkedHashMap) r).get("nickname"))
+                                .orElse(null))
+                        .role(Set.of(new SimpleGrantedAuthority(USER.toString())))
+                        .build());
+            }
 
         } else {
             response.sendRedirect(clientHost + "/login");
+            return;
         }
 
-        response.setHeader("atk", BEARER + jwtService.createAccessToken(user.getEmail()));
+        response.setHeader("atk", BEARER + jwtService.createAccessToken(authentication));
 
-        Cookie cookie = new Cookie("rtk", jwtService.createRefreshToken(user.getEmail()));
+        Cookie cookie = new Cookie("rtk", jwtService.createRefreshToken(authentication));
         cookie.setMaxAge((int) jwtService.getRtkExpiredTime());
         cookie.setPath("/");
         response.addCookie(cookie);
 
-        response.sendRedirect(String.format("%s?atk=%s", clientHost, BEARER + jwtService.createRefreshToken(user.getEmail())));
+        response.sendRedirect(String.format("%s?atk=%s", clientHost, BEARER + jwtService.createRefreshToken(authentication)));
 
     }
 }

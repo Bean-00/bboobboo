@@ -11,11 +11,13 @@ function App() {
     // const [loginUser, setLoginUser] = useState(null);
     // const [loginUser, dispatch] = useReducer(UserReducer, null);
     const {setUser} = userStore()
-    const [searchParams] = useSearchParams()
+    const [searchParams, setSearchParams] = useSearchParams()
 
     const getLoginUser = async () => {
         if (searchParams?.get("atk")) {
            sessionStorage.setItem("atk", searchParams.get("atk"));
+           searchParams.delete("atk");
+           setSearchParams(searchParams)
         }
 
         const {isError, data} = await getLoginUserAction()

@@ -5,12 +5,10 @@ import net.todo.core.security.dto.User;
 import net.todo.core.security.repository.SecurityRepository;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -33,6 +31,11 @@ public class SecurityServiceImpl implements SecurityService, UserDetailsService 
     }
 
     @Override
+    public User.UserAccount loadUserByKakaoId(String kakaoId) {
+        return securityRepository.findUserByKakaoId(kakaoId);
+    }
+
+    @Override
     public User.UserAccount joinUser(User.UserAccount user) {
         securityRepository.persistUser(user);
         return user;
@@ -40,6 +43,6 @@ public class SecurityServiceImpl implements SecurityService, UserDetailsService 
 
     @Override
     public User.UserAccount loadUserByUsername(String username) throws UsernameNotFoundException {
-        return securityRepository.findUserByEmail(username);
+        return securityRepository.findUserByUsername(username);
     }
 }

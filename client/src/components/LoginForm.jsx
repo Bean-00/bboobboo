@@ -28,9 +28,10 @@ const LoginForm = ({onSuccess, onFailure}) => {
         onSuccess(data);
     }
 
-    const googleLogin = () => {
-        window.location.href = `${serverHost}/api/oauth2/authorization/google`;
+    const snsLogin = (registraionId) => {
+        window.location.href = `${serverHost}/api/oauth2/authorization/${registraionId}`;
     }
+
 
     return (
         <form className="max-w-sm mx-auto w-full" onSubmit={login}>
@@ -74,8 +75,15 @@ const LoginForm = ({onSuccess, onFailure}) => {
                 <button
                     className="text-black border bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                     type="button"
-                    onClick={googleLogin}>
+                    onClick={()=>snsLogin("google")}>
                     Google
+                </button>
+
+                <button
+                    className="text-black bg-yellow-300 border hover:bg-yellow-400 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    type="button"
+                    onClick={()=>snsLogin("kakao")}>
+                   Kakao
                 </button>
             </div>
         </form>

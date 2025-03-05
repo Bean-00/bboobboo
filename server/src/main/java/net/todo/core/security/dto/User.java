@@ -1,7 +1,5 @@
 package net.todo.core.security.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import net.todo.core.security.constant.UserRole;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,7 +7,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -54,6 +51,7 @@ public class User {
         private String email;
         private String name;
         private String googleId;
+        private String kakaoId;
         private Set<GrantedAuthority> role;
         private String password;
 

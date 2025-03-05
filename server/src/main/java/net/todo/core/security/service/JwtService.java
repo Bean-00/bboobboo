@@ -30,19 +30,11 @@ public class JwtService {
     private String secretKey;
 
     public String createAccessToken(Authentication authentication) {
-       return createToken(authentication.getName(), atkExpiredTime);
+       return createToken(authentication, atkExpiredTime);
     }
 
     public String createRefreshToken(Authentication authentication) {
-        return createToken(authentication.getName(), rtkExpiredTime);
-    }
-
-    public String createAccessToken(String subject) {
-        return createToken(subject, atkExpiredTime);
-    }
-
-    public String createRefreshToken(String subject) {
-        return createToken(subject, rtkExpiredTime);
+        return createToken(authentication, rtkExpiredTime);
     }
 
     public JwtDTO verifyToken(String token) {
@@ -69,9 +61,9 @@ public class JwtService {
         return rtkExpiredTime;
     }
 
-    private String createToken(String subject, long expiredTime) {
+    private String createToken(Authentication authentication, long expiredTime) {
         return Jwts.builder()
-                .setSubject(subject)
+                .setSubject(authentication.getName())
                 .claim("exp", Instant.now().getEpochSecond() + expiredTime)
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), algorithm)
                 .compact();
