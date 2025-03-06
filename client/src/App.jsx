@@ -4,7 +4,10 @@ import {Outlet, useParams, useSearchParams} from "react-router-dom";
 // import {UserContext} from "./context/UserContext.js";
 import {getLoginUserAction} from "./service/SecurityService.js";
 // import UserReducer from "./reducer/UserReducer.js";
-import userStore from "./store/UserStore.js"; // Flowbite-React에서 제공하는 Button 컴포넌트 import
+import userStore from "./store/UserStore.js";
+import {APIProvider} from "@vis.gl/react-google-maps";
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+
 
 function App() {
 
@@ -36,10 +39,10 @@ function App() {
         getLoginUser();
     }, [searchParams])
     return (
-        <>
+        <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
             <TodoNavbar/>
             <Outlet/>
-        </>
+        </APIProvider>
         // <UserContext.Provider value={{loginUser, dispatch}}>
         // <TodoNavbar/>
         // <Outlet/>
