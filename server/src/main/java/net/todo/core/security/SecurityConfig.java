@@ -105,7 +105,7 @@ public class SecurityConfig {
             corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
             corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
             corsConfiguration.setAllowCredentials(true);
-            corsConfiguration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+            corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173", "http://todo.net"));
             corsConfiguration.setExposedHeaders(List.of("atk"));
 
             return corsConfiguration;
