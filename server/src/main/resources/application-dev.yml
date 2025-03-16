@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    hikari:
+      driver-class-name: ENC(GexwUCn5qNafSY4AvM1niLYZvKHBjJnKq6RE6lkzmVr1h8yyfQ03+Nlu/GcN+1J2)
+      jdbc-url: ENC(pTRTofkM3MuU9ZQLKZLke3siN0KPIgK6AOpnN7BwigMbu4i47UH8ady9h6jjp3an8qgK7M/3R7xAl5/jzg4HNg==)
+      username: ENC(plkrsDYOTOQmU1019hz3FetH61U/dlrLq3dMHdN9osA=)
+      password: ENC(WnHJdbOZ3RfYVDD0oAFiMy0gBZHeToBiqTMMc19T6ZA=)
+      maximum-pool-size: 5
+
+server:
+  log:
+    path: /app/todo/server/logs
+
+oauth2:
+  client-host: http://localhost:5173
