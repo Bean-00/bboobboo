@@ -1,6 +1,6 @@
 import {_fetch, fetchGet} from "./fetch.js";
 
-const serverHost = import.meta.env.VITE_SERVER_HOST;
+const serverHost = import.meta.env.VITE_FILE_SERVER_HOST;
 export const FILE_API_URL = `${serverHost}/api/files`;
 
 export const uploadFilesAction = (formData) => {

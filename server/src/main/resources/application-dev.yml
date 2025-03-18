@@ -13,3 +13,6 @@ server:
 
 oauth2:
   client-host: http://localhost:5173
+
+file:
+  uploaded-path: /app/todo/server/uploadedFiles
